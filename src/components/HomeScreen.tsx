@@ -1,5 +1,5 @@
 // src/components/HomeScreen.tsx
-import React, { useState } from "react";
+import { useState } from "react";
 import { countCritical } from "../logic/criticalStorage";
 import { ALL_QUESTIONS } from "../data/allQuestions";
 

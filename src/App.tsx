@@ -1,5 +1,5 @@
 // App.tsx
-import React, { useState } from "react";
+import { useState } from "react";
 import { HomeScreen } from "./components/HomeScreen";
 import { QuizSession } from "./components/QuizSession"; // lo useremo dopo
 import { CriticalArea } from "./components/CriticalArea";
