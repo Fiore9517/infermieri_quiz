@@ -1,0 +1,11 @@
+[33maeac54f[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m restart
+[33maf55178[m Update vite.config.ts
+[33m567b421[m Update supabaseClient.ts
+[33m928409b[m Update supabaseClient.ts
+[33m75369bd[m fix: React import
+[33mdb836a3[m Use default Supabase URL and anon key if env vars missing
+[33m5ff19d6[m Update supabaseClient.ts
+[33m845ef4b[m fix
+[33m2384400[m "fix: remove unused React imports"
+[33m883e7e0[m Init
+[33m6eb01b5[m Initial commit

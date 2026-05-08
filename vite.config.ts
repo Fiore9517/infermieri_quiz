@@ -3,6 +3,9 @@ import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
+  resolve: {
+    dedupe: ["react", "react-dom"],
+  },
   plugins: [
     react(),
     VitePWA({
@@ -32,7 +35,6 @@ export default defineConfig({
         ],
       },
       workbox: {
-        // Mette in cache TUTTO: js, css, domande, immagini
         globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
         runtimeCaching: [
           {
