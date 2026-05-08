@@ -42,29 +42,28 @@ export function QuizSession({ onExit, topic }: QuizSessionProps) {
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<AnswerMap>({});
+  const [selectedOption, setSelectedOption] = useState<"A" | "B" | "C" | "D" | null>(null);
   const [isFinished, setIsFinished] = useState(false);
 
   const current = shuffledQuestions[currentIndex];
 
-  // La risposta già data per la domanda corrente (se esiste)
   const currentAnswer = answers[current.question.id] ?? null;
   const confirmed = currentAnswer !== null;
   const isCorrect = confirmed && currentAnswer === current.newCorrect;
 
   // ── CONFERMA RISPOSTA ───────────────────────────────────────
-  function handleConfirm(selected: "A" | "B" | "C" | "D") {
-    if (confirmed) return; // già risposto, non sovrascrivere
-    setAnswers((prev) => ({ ...prev, [current.question.id]: selected }));
+  function handleConfirm() {
+    if (confirmed || !selectedOption) return;
+    setAnswers((prev) => ({ ...prev, [current.question.id]: selectedOption }));
   }
 
   // ── AVANTI ─────────────────────────────────────────────────
   function handleNext() {
     if (!confirmed) {
-      alert("Seleziona una risposta prima di continuare.");
+      alert("Seleziona e conferma una risposta prima di continuare.");
       return;
     }
     if (currentIndex === shuffledQuestions.length - 1) {
-      // Fine quiz → salva errori nell'area critica
       const wrongIds = shuffledQuestions
         .filter((sq) => answers[sq.question.id] !== sq.newCorrect)
         .map((sq) => sq.question.id);
@@ -72,6 +71,7 @@ export function QuizSession({ onExit, topic }: QuizSessionProps) {
       setIsFinished(true);
     } else {
       setCurrentIndex((i) => i + 1);
+      setSelectedOption(null); // reset selezione per la prossima domanda
     }
   }
 
@@ -79,6 +79,7 @@ export function QuizSession({ onExit, topic }: QuizSessionProps) {
   function handlePrev() {
     if (currentIndex > 0) {
       setCurrentIndex((i) => i - 1);
+      setSelectedOption(null); // reset selezione
     }
   }
 
@@ -87,6 +88,7 @@ export function QuizSession({ onExit, topic }: QuizSessionProps) {
     setShuffledQuestions(buildSession());
     setCurrentIndex(0);
     setAnswers({});
+    setSelectedOption(null);
     setIsFinished(false);
   }
 
@@ -147,14 +149,18 @@ export function QuizSession({ onExit, topic }: QuizSessionProps) {
         {/* Opzioni */}
         <div>
           {current.shuffledOptions.map(({ key, label }) => {
-            const isSelected = currentAnswer === key;
+            const isSelected = confirmed
+              ? currentAnswer === key
+              : selectedOption === key;
             const isRightAnswer = confirmed && key === current.newCorrect;
-            const isWrongSelected = confirmed && isSelected && key !== current.newCorrect;
+            const isWrongSelected =
+              confirmed && currentAnswer === key && key !== current.newCorrect;
 
             const optionClass = [
               "answer-option",
               isRightAnswer ? "correct" : "",
               isWrongSelected ? "wrong" : "",
+              !confirmed && isSelected ? "selected" : "",
             ]
               .filter(Boolean)
               .join(" ");
@@ -164,14 +170,14 @@ export function QuizSession({ onExit, topic }: QuizSessionProps) {
                 key={key}
                 className={optionClass}
                 style={{ cursor: confirmed ? "default" : "pointer" }}
-                onClick={() => !confirmed && handleConfirm(key)}
+                onClick={() => !confirmed && setSelectedOption(key)}
               >
                 <input
                   type="radio"
                   name="option"
                   value={key}
                   checked={isSelected}
-                  onChange={() => !confirmed && handleConfirm(key)}
+                  onChange={() => {}}
                   disabled={confirmed}
                 />
                 <span>
@@ -206,13 +212,18 @@ export function QuizSession({ onExit, topic }: QuizSessionProps) {
             ← Precedente
           </button>
 
-          {/* Avanti / Conferma */}
+          {/* Conferma / Domanda successiva */}
           {!confirmed ? (
-            <button className="btn-primary" onClick={() => {
-              if (!currentAnswer) {
-                alert("Seleziona una risposta prima di continuare.");
-              }
-            }}>
+            <button
+              className="btn-primary"
+              onClick={() => {
+                if (!selectedOption) {
+                  alert("Seleziona una risposta prima di confermare.");
+                } else {
+                  handleConfirm();
+                }
+              }}
+            >
               Conferma risposta
             </button>
           ) : (
