@@ -16,10 +16,14 @@ import {PSICHIATRIA_QUESTIONS} from "./questions-psichiatria";
 import {SICUREZZA_FARMACI_QUESTIONS} from "./questions-sicurezza-farmaci";
 import {PEDIATRIA_OSTETRICIA_QUESTIONS} from "./questions-pediatria-ostetricia";
 import {BANCADATIX_QUESTIONS} from "./questions-bancadatix";
+import { ASL_BARI_SCRITTA_QUESTIONS } from "./questions-asl-bari-scritta";
+import { MATERA_QUESTIONS } from "./questions-matera";
+import { EXTRA_5000_QUESTIONS } from "./questions-extra-5000";
+import { normalizeQuestionTopics, uniqueQuestions } from "./questionUtils";
 import type { Question } from "../types";
 
 
-export const ALL_QUESTIONS: Question[] = [
+const RAW_QUESTIONS: Question[] = [
   ...INFERMIERISTICA_QUESTIONS,
   ...LEGISLAZIONE_QUESTIONS,
   ...ANATOMIA_QUESTIONS,
@@ -38,4 +42,11 @@ export const ALL_QUESTIONS: Question[] = [
   ...SICUREZZA_FARMACI_QUESTIONS,
   ...PEDIATRIA_OSTETRICIA_QUESTIONS,
   ...BANCADATIX_QUESTIONS,
+  ...ASL_BARI_SCRITTA_QUESTIONS,
+  ...MATERA_QUESTIONS,
+  ...EXTRA_5000_QUESTIONS,
 ];
+
+export const ALL_QUESTIONS: Question[] = uniqueQuestions(
+  normalizeQuestionTopics(RAW_QUESTIONS)
+);

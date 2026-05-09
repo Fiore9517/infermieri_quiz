@@ -1,13 +1,15 @@
-// App.tsx
 import { useState } from "react";
 import { HomeScreen } from "./components/HomeScreen";
-import { QuizSession } from "./components/QuizSession"; // lo useremo dopo
+import type { QuizConfig } from "./components/HomeScreen";
+import { QuizSession } from "./components/QuizSession";
 import { CriticalArea } from "./components/CriticalArea";
+import AuthPage from "./pages/AuthPage";
 
 type Mode =
   | { type: "HOME" }
-  | { type: "QUIZ"; topic?: string }
-  | { type: "CRITICAL" };
+  | { type: "QUIZ"; config: QuizConfig }
+  | { type: "CRITICAL" }
+  | { type: "AUTH" };
 
 export function App() {
   const [mode, setMode] = useState<Mode>({ type: "HOME" });
@@ -15,30 +17,25 @@ export function App() {
   if (mode.type === "HOME") {
     return (
       <HomeScreen
-        onStartQuiz={() => setMode({ type: "QUIZ" })}
+        onStartQuiz={(config) => setMode({ type: "QUIZ", config })}
         onStartCritical={() => setMode({ type: "CRITICAL" })}
-        onStartTopicQuiz={(topic) => setMode({ type: "QUIZ", topic })}
+        onAuth={() => setMode({ type: "AUTH" })}
       />
     );
+  }
+
+  if (mode.type === "AUTH") {
+    return <AuthPage onExit={() => setMode({ type: "HOME" })} />;
   }
 
   if (mode.type === "CRITICAL") {
-    return (
-      <CriticalArea
-        onExit={() => setMode({ type: "HOME" })}
-      />
-    );
+    return <CriticalArea onExit={() => setMode({ type: "HOME" })} />;
   }
 
-  // QUIZ (per ora ignoriamo il topic, lo useremo nello step dopo)
- if (mode.type === "QUIZ") {
   return (
     <QuizSession
-      topic={mode.topic}        // <- NUOVO: può essere undefined (quiz misto)
+      config={mode.config}
       onExit={() => setMode({ type: "HOME" })}
     />
   );
-}
-
-  return null;
 }

@@ -5,10 +5,11 @@ import { addWrongAnswers } from "../logic/criticalStorage";
 import { shuffleOptions } from "../logic/quizUtils";
 import { smartShuffle, markQuestionsAsSeen } from "../data/quizHistory";
 import type { Question } from "../types";
+import type { QuizConfig } from "./HomeScreen";
 
 type QuizSessionProps = {
   onExit: () => void;
-  topic?: string;
+  config: QuizConfig;
 };
 
 type AnswerMap = Record<string, "A" | "B" | "C" | "D">;
@@ -19,15 +20,16 @@ type ShuffledQuestion = {
   newCorrect: "A" | "B" | "C" | "D";
 };
 
-const SESSION_SIZE = 30;
-
-export function QuizSession({ onExit, topic }: QuizSessionProps) {
+export function QuizSession({ onExit, config }: QuizSessionProps) {
   const buildSession = (): ShuffledQuestion[] => {
-    const pool = topic
-      ? ALL_QUESTIONS.filter((q) => q.topic === topic)
-      : ALL_QUESTIONS;
+    const basePool = config.topic
+      ? ALL_QUESTIONS.filter((q) => q.topic === config.topic)
+      : ALL_QUESTIONS.slice(config.fromIndex, config.toIndex + 1);
 
-    const picked = smartShuffle(pool, SESSION_SIZE);
+    const safeCount = Math.min(Math.max(1, config.count), basePool.length);
+    const picked = config.random
+      ? smartShuffle(basePool, safeCount)
+      : basePool.slice(0, safeCount);
     markQuestionsAsSeen(picked.map((q) => q.id));
 
     return picked.map((q) => {
@@ -137,7 +139,7 @@ export function QuizSession({ onExit, topic }: QuizSessionProps) {
         <p style={{ color: "#9ca3af", fontSize: "0.85rem", marginBottom: "0.5rem" }}>
           Domanda {currentIndex + 1} / {shuffledQuestions.length} —{" "}
           <span style={{ color: "#38bdf8" }}>
-            {topic ?? current.question.topic}
+            {config.topic ?? current.question.topic}
           </span>
         </p>
 

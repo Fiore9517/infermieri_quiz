@@ -7,9 +7,13 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "questions:audit": "node scripts/audit-questions.mjs 5000",
+    "questions:import": "node scripts/import-questions-csv.mjs",
+    "questions:quota": "node scripts/plan-question-quota.mjs 5000",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.105.4",
     "react": "^19.2.5",
     "react-dom": "^19.2.5"
   },
