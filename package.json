@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "node scripts/check-env.mjs && tsc -b && vite build",
+    "build:local": "tsc -b && vite build",
     "lint": "eslint .",
     "questions:audit": "node scripts/audit-questions.mjs 5000",
     "questions:import": "node scripts/import-questions-csv.mjs",
