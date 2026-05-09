@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { supabase } from "../lib/supabaseClient";
+import { isSupabaseConfigured, supabase } from "../lib/supabaseClient";
 
 type AuthPageProps = {
   onExit: () => void;
@@ -12,6 +12,7 @@ export default function AuthPage({ onExit }: AuthPageProps) {
 
   async function handleAuth(e: React.FormEvent) {
     e.preventDefault();
+    if (!supabase) return;
 
     const { error } = isRegister
       ? await supabase.auth.signUp({ email, password })
@@ -29,6 +30,13 @@ export default function AuthPage({ onExit }: AuthPageProps) {
   return (
     <div className="auth-page">
       <h1>{isRegister ? "Registrati" : "Accedi"}</h1>
+
+      {!isSupabaseConfigured && (
+        <p>
+          Login non configurato: aggiungi VITE_SUPABASE_URL e
+          VITE_SUPABASE_ANON_KEY nelle variabili ambiente di Vercel.
+        </p>
+      )}
 
       <form onSubmit={handleAuth}>
         <input
@@ -48,7 +56,7 @@ export default function AuthPage({ onExit }: AuthPageProps) {
           minLength={6}
         />
 
-        <button type="submit">
+        <button type="submit" disabled={!isSupabaseConfigured}>
           {isRegister ? "Crea account" : "Accedi"}
         </button>
       </form>
